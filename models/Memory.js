@@ -17,7 +17,7 @@ const memorySchema = mongoose.Schema({
     favorite:{
         type:Boolean
     },
-    UserId:{
+    userId:{
         type:String
     },
     image:{
