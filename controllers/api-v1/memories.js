@@ -32,4 +32,14 @@ router.post('/', authLockedRoute, async (req, res) => {
     }
 })
 
+router.put('/:id', authLockedRoute, async (req, res) => {
+    try {
+        const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body)
+        res.json(foundMemory)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: 'server error'  })
+    }
+})
+
 module.exports = router
