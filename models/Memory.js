@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 
+const imageSchema = mongoose.Schema({
+    url:{
+        type:String
+    }
+},{timestamps:true})
+
 const MemorySchema = mongoose.Schema({
     title:{
         type: String
@@ -8,7 +14,7 @@ const MemorySchema = mongoose.Schema({
         type:String
     },
     image:{
-        type:String
+        type:[imageSchema]
     },
     UserId:{
         type:String
