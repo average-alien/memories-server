@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Memory'
   }],
-  memoryId: [{
+  memories: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Memory'
   }]
