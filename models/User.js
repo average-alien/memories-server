@@ -10,7 +10,14 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String
-  }
+  },
+  pfp: {
+    type: String
+  },
+  memoryId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Memory'
+  }]
 }, {
   timestamps: true
 })
