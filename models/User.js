@@ -11,9 +11,16 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String
   },
+  avatar: {
+    type: String
+  },
   pfp: {
     type: String
   },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Memory'
+  }],
   memoryId: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Memory'
