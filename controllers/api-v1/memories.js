@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const db = require('../../models')
-const jwt = require('jsonwebtoken')
 const authLockedRoute = require('./authLockedRoute')
 
 router.get('/', authLockedRoute, async (req, res) => {
@@ -32,6 +31,10 @@ router.post('/', authLockedRoute, async (req, res) => {
     }
 })
 
+router.get('/:id', authLockedRoute, async (req, res) => {
+    
+})
+
 router.put('/:id', authLockedRoute, async (req, res) => {
     try {
         const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body)
@@ -41,5 +44,17 @@ router.put('/:id', authLockedRoute, async (req, res) => {
         res.status(500).json({ msg: 'server error'  })
     }
 })
+
+router.delete('/:id', authLockedRoute, async (req, res) => {
+    try {
+        await db.Memory.findByIdAndDelete(req.params.id)
+        res.sendStatus(204)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: 'server error'  })
+    }
+})
+
+router.use('/:id', require('./comments'))
 
 module.exports = router
