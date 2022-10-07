@@ -4,16 +4,16 @@ const MemorySchema = mongoose.Schema({
     title:{
         type: String
     },
-    Note:{
+    note:{
         type:String
     },
-    Image:{
+    image:{
         type:String
     },
     UserId:{
         type:String
     },
-    Favorite:{
+    favorite:{
         type:Boolean
     }
 },{timestamps:true})
