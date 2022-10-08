@@ -20,11 +20,8 @@ router.get('/', authLockedRoute, async (req, res) => {
 router.post('/', authLockedRoute, async (req, res) => {
     try {
         const newMemory = await db.Memory.create(req.body)
-        console.log('1', newMemory)
         res.locals.user.memories.push(newMemory)
-        console.log('2', res.locals.user)
         newMemory.userId = res.locals.user
-        console.log('3', newMemory)
         await newMemory.save()
         await res.locals.user.save()
         res.status(201).json(newMemory)
@@ -36,7 +33,7 @@ router.post('/', authLockedRoute, async (req, res) => {
 
 router.get('/:id', authLockedRoute, async (req, res) => {
     try {
-        const foundMemory = await db.Memory.findById(req.params.id)
+        const foundMemory = await db.Memory.findById(req.params.id).populate({ path: 'userId' })
         res.json(foundMemory)
     } catch (error) {
         console.log(error)
