@@ -19,12 +19,15 @@ router.get('/', authLockedRoute, async (req, res) => {
 
 router.post('/', authLockedRoute, async (req, res) => {
     try {
-        const newMemory = db.Memory.create(req.body)
+        const newMemory = await db.Memory.create(req.body)
+        console.log('1', newMemory)
         res.locals.user.memories.push(newMemory)
-        newMemory.user = res.locals.user
+        console.log('2', res.locals.user)
+        newMemory.userId = res.locals.user
+        console.log('3', newMemory)
         await newMemory.save()
         await res.locals.user.save()
-        res.status(204).json(newMemory)
+        res.status(201).json(newMemory)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
@@ -61,6 +64,6 @@ router.delete('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-router.use('/:id/comment', require('./comment'))
+// router.use('/:id/comment', require('./comment'))
 
 module.exports = router
