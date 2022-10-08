@@ -43,7 +43,10 @@ router.get('/:id', authLockedRoute, async (req, res) => {
 
 router.put('/:id', authLockedRoute, async (req, res) => {
     try {
-        const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body)
+        const options = {
+            new: true
+        }
+        const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body, options)
         res.json(foundMemory)
     } catch (error) {
         console.log(error)
