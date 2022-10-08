@@ -64,6 +64,6 @@ router.delete('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-// router.use('/:id/comment', require('./comment'))
+router.use('/:id/comment', require('./comment'))
 
 module.exports = router
