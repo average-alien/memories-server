@@ -10,7 +10,7 @@ router.get('/', authLockedRoute, async (req, res) => {
                 path: 'user'
             }
         })
-
+        res.json(currentUser.memories)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
@@ -61,6 +61,6 @@ router.delete('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-// router.use('/:id', require('./comments'))
+router.use('/:id/comment', require('./comment'))
 
 module.exports = router
