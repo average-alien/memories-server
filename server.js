@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 // controllers
 // prefixing the routes with a semantic version
 app.use('/api-v1/users', require('./controllers/api-v1/users.js'))
+app.use('/api-v1/memories', require('./controllers/api-v1/memories'))
 
 // hey listen
 app.listen(PORT, () => {
