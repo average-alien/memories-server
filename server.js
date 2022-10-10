@@ -16,6 +16,7 @@ app.use(cors())
 // request body parsing
 // app.use(express.urlencoded({ extended: false })) // optional 
 app.use(express.json())
+app.use(express.static('uploads'))
 
 // GET / -- test index route
 app.get('/', (req, res) => {

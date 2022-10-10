@@ -1,23 +1,36 @@
 const router = require('express').Router()
 const db = require('../../models')
 const authLockedRoute = require('./authLockedRoute')
+require('dotenv').config()
+const path = require('path')
+const { unlinkSync } = require('fs')
+const multer = require('multer')
+const cloudinary = require('cloudinary').v2
+
+const uploads = multer({ dest: 'uploads/' })
 
 router.get('/', authLockedRoute, async (req, res) => {
     try {
         const currentUser = await db.User.findById(res.locals.user._id).populate({
             path: "memories"
         })
-        res.json(currentUser.memories)
+        res.json(currentUser)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
     }
 })
 
-router.post('/', authLockedRoute, async (req, res) => {
+router.post('/', authLockedRoute, uploads.array('images', 20), async (req, res) => {
     try {
+        const upload = async path => await cloudinary.uploader.upload(path)
         const newMemory = await db.Memory.create(req.body)
         res.locals.user.memories.push(newMemory)
+        for (const file of req.files) {
+            const cloudImageData = await upload(file.path)
+            newMemory.images.push(cloudImageData.url)
+            unlinkSync(file.path)
+        }
         newMemory.userId = res.locals.user
         await newMemory.save()
         await res.locals.user.save()
