@@ -1,29 +1,46 @@
 const router = require('express').Router()
 const db = require('../../models')
 const authLockedRoute = require('./authLockedRoute')
+require('dotenv').config()
+const path = require('path')
+const { unlinkSync } = require('fs')
+const multer = require('multer')
+const cloudinary = require('cloudinary').v2
+
+const uploads = multer({ dest: 'uploads/' })
 
 router.get('/', authLockedRoute, async (req, res) => {
     try {
         const currentUser = res.locals.user.populate({
-            path: 'memories',
-            populate: {
-                path: 'user'
-            }
+            path: 'memories'
         })
-        res.json(currentUser.memories)
+        res.json(currentUser)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
     }
 })
 
-router.post('/', authLockedRoute, async (req, res) => {
+router.post('/', uploads.array('images', 20), async (req, res) => {
     try {
         const newMemory = await db.Memory.create(req.body)
-        res.locals.user.memories.push(newMemory)
-        newMemory.userId = res.locals.user
+        // res.locals.user.memories.push(newMemory)
+        await req.files.forEach(file => {
+            console.log('file', file)
+            cloudinary.uploader.upload(file.path)
+                .then(cloudImageData => {
+                    console.log('upload', cloudImageData)
+                    newMemory.images.push(cloudImageData.url)
+                    unlinkSync(file.path)
+                })
+                .catch (error => {
+                    console.log(error)
+                    res.status(500).json({ msg: 'server error'  })
+                })
+        })
+        // newMemory.userId = res.locals.user
         await newMemory.save()
-        await res.locals.user.save()
+        // await res.locals.user.save()
         res.status(201).json(newMemory)
     } catch (error) {
         console.log(error)
@@ -64,6 +81,6 @@ router.delete('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-router.use('/:id/comment', require('./comment'))
+// router.use('/:id/comment', require('./comment'))
 
 module.exports = router
