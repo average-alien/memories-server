@@ -4,11 +4,8 @@ const authLockedRoute = require('./authLockedRoute')
 
 router.get('/', authLockedRoute, async (req, res) => {
     try {
-        const currentUser = res.locals.user.populate({
-            path: 'memories',
-            populate: {
-                path: 'user'
-            }
+        const currentUser = await db.User.findById(res.locals.user._id).populate({
+            path: "memories"
         })
         res.json(currentUser.memories)
     } catch (error) {
