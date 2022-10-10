@@ -4,11 +4,8 @@ const authLockedRoute = require('./authLockedRoute')
 
 router.get('/', authLockedRoute, async (req, res) => {
     try {
-        const currentUser = res.locals.user.populate({
-            path: 'memories',
-            populate: {
-                path: 'user'
-            }
+        const currentUser = await db.User.findById(res.locals.user._id).populate({
+            path: "memories"
         })
         res.json(currentUser.memories)
     } catch (error) {
@@ -19,12 +16,12 @@ router.get('/', authLockedRoute, async (req, res) => {
 
 router.post('/', authLockedRoute, async (req, res) => {
     try {
-        const newMemory = db.Memory.create(req.body)
+        const newMemory = await db.Memory.create(req.body)
         res.locals.user.memories.push(newMemory)
-        newMemory.user = res.locals.user
+        newMemory.userId = res.locals.user
         await newMemory.save()
         await res.locals.user.save()
-        res.status(204).json(newMemory)
+        res.status(201).json(newMemory)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
@@ -33,7 +30,7 @@ router.post('/', authLockedRoute, async (req, res) => {
 
 router.get('/:id', authLockedRoute, async (req, res) => {
     try {
-        const foundMemory = await db.Memory.findById(req.params.id)
+        const foundMemory = await db.Memory.findById(req.params.id).populate({ path: 'userId' })
         res.json(foundMemory)
     } catch (error) {
         console.log(error)
@@ -43,7 +40,10 @@ router.get('/:id', authLockedRoute, async (req, res) => {
 
 router.put('/:id', authLockedRoute, async (req, res) => {
     try {
-        const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body)
+        const options = {
+            new: true
+        }
+        const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body, options)
         res.json(foundMemory)
     } catch (error) {
         console.log(error)

@@ -27,7 +27,8 @@ const memorySchema = mongoose.Schema({
         type:Date
     },
     userId:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 },{timestamps:true})
 
