@@ -23,21 +23,14 @@ router.get('/', authLockedRoute, async (req, res) => {
 
 router.post('/', uploads.array('images', 20), async (req, res) => {
     try {
+        const upload = async path => await cloudinary.uploader.upload(path)
         const newMemory = await db.Memory.create(req.body)
         // res.locals.user.memories.push(newMemory)
-        await req.files.forEach(file => {
-            console.log('file', file)
-            cloudinary.uploader.upload(file.path)
-                .then(cloudImageData => {
-                    console.log('upload', cloudImageData)
-                    newMemory.images.push(cloudImageData.url)
-                    unlinkSync(file.path)
-                })
-                .catch (error => {
-                    console.log(error)
-                    res.status(500).json({ msg: 'server error'  })
-                })
-        })
+        for (const file of req.files) {
+            const cloudImageData = await upload(file.path)
+            newMemory.images.push(cloudImageData.url)
+            unlinkSync(file.path)
+        }
         // newMemory.userId = res.locals.user
         await newMemory.save()
         // await res.locals.user.save()
@@ -81,6 +74,6 @@ router.delete('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-// router.use('/:id/comment', require('./comment'))
+router.use('/:id/comment', require('./comment'))
 
 module.exports = router
