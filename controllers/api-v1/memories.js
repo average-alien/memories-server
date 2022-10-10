@@ -21,19 +21,19 @@ router.get('/', authLockedRoute, async (req, res) => {
     }
 })
 
-router.post('/', uploads.array('images', 20), async (req, res) => {
+router.post('/', authLockedRoute, uploads.array('images', 20), async (req, res) => {
     try {
         const upload = async path => await cloudinary.uploader.upload(path)
         const newMemory = await db.Memory.create(req.body)
-        // res.locals.user.memories.push(newMemory)
+        res.locals.user.memories.push(newMemory)
         for (const file of req.files) {
             const cloudImageData = await upload(file.path)
             newMemory.images.push(cloudImageData.url)
             unlinkSync(file.path)
         }
-        // newMemory.userId = res.locals.user
+        newMemory.userId = res.locals.user
         await newMemory.save()
-        // await res.locals.user.save()
+        await res.locals.user.save()
         res.status(201).json(newMemory)
     } catch (error) {
         console.log(error)
