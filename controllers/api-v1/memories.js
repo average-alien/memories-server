@@ -11,8 +11,8 @@ const uploads = multer({ dest: 'uploads/' })
 
 router.get('/', authLockedRoute, async (req, res) => {
     try {
-        const currentUser = res.locals.user.populate({
-            path: 'memories'
+        const currentUser = await db.User.findById(res.locals.user._id).populate({
+            path: "memories"
         })
         res.json(currentUser)
     } catch (error) {

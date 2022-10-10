@@ -1,27 +1,35 @@
 const mongoose = require('mongoose')
 
-const imageSchema = mongoose.Schema({
-    url:{
+
+const commentSchema = mongoose.Schema({
+    note:{
+        type:String
+    },
+    userId:{
         type:String
     }
 },{timestamps:true})
 
-const MemorySchema = mongoose.Schema({
+const memorySchema = mongoose.Schema({
     title:{
         type: String
     },
     note:{
         type:String
     },
-    image:{
-        type:[imageSchema]
+    images:{
+        type:[String]
     },
-    UserId:{
-        type:String
+    comments:{
+        type:[commentSchema]
     },
-    favorite:{
-        type:Boolean
+    date:{
+        type:Date
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 },{timestamps:true})
 
-module.exports = mongoose.model('Memory',MemorySchema)
+module.exports = mongoose.model('Memory',memorySchema)
