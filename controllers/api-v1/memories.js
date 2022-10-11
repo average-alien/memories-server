@@ -14,7 +14,7 @@ router.get('/', authLockedRoute, async (req, res) => {
         const currentUser = await db.User.findById(res.locals.user._id).populate({
             path: "memories"
         })
-        res.json(currentUser)
+        res.json(currentUser.memories)
     } catch (error) {
         console.log(error)
         res.status(500).json({ msg: 'server error'  })
@@ -23,14 +23,17 @@ router.get('/', authLockedRoute, async (req, res) => {
 
 router.post('/', authLockedRoute, uploads.array('images', 20), async (req, res) => {
     try {
-        const upload = async path => await cloudinary.uploader.upload(path)
         const newMemory = await db.Memory.create(req.body)
-        res.locals.user.memories.push(newMemory)
         for (const file of req.files) {
-            const cloudImageData = await upload(file.path)
-            newMemory.images.push(cloudImageData.url)
+            const cloudImageData = await cloudinary.uploader.upload(file.path)
+            newMemory.images.push({
+                url: cloudImageData.url,
+                publicId: cloudImageData.public_id
+            })
+            await newMemory.save()
             unlinkSync(file.path)
         }
+        res.locals.user.memories.push(newMemory)
         newMemory.userId = res.locals.user
         await newMemory.save()
         await res.locals.user.save()
@@ -51,12 +54,21 @@ router.get('/:id', authLockedRoute, async (req, res) => {
     }
 })
 
-router.put('/:id', authLockedRoute, async (req, res) => {
+router.put('/:id', authLockedRoute, uploads.array('images', 20), async (req, res) => {
     try {
         const options = {
             new: true
         }
         const foundMemory = await db.Memory.findByIdAndUpdate(req.params.id, req.body, options)
+        for (const file of req.files) {
+            const cloudImageData = await cloudinary.uploader.upload(file.path)
+            foundMemory.images.push({
+                url: cloudImageData.url,
+                publicId: cloudImageData.public_id
+            })
+            await foundMemory.save()
+            unlinkSync(file.path)
+        }
         res.json(foundMemory)
     } catch (error) {
         console.log(error)
@@ -66,7 +78,11 @@ router.put('/:id', authLockedRoute, async (req, res) => {
 
 router.delete('/:id', authLockedRoute, async (req, res) => {
     try {
-        await db.Memory.findByIdAndDelete(req.params.id)
+        const foundMemory = await db.Memory.findById(req.params.id)
+        for (const image of foundMemory.images) {
+            await cloudinary.uploader.destroy(image.publicId)
+        }
+        await db.Memory.deleteOne(foundMemory)
         res.sendStatus(204)
     } catch (error) {
         console.log(error)

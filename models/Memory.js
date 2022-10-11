@@ -1,12 +1,21 @@
 const mongoose = require('mongoose')
 
+const imageSchema = mongoose.Schema({
+    url: {
+        type: String
+    },
+    publicId: {
+        type: String
+    }
+})
 
 const commentSchema = mongoose.Schema({
     note:{
-        type:String
+        type: String
     },
     userId:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 },{timestamps:true})
 
@@ -18,7 +27,7 @@ const memorySchema = mongoose.Schema({
         type:String
     },
     images:{
-        type:[String]
+        type:[imageSchema]
     },
     comments:{
         type:[commentSchema]
