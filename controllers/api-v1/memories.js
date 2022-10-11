@@ -23,15 +23,17 @@ router.get('/', authLockedRoute, async (req, res) => {
 
 router.post('/', authLockedRoute, uploads.array('images', 20), async (req, res) => {
     try {
-        // TODO store image public_id
-        const upload = async path => await cloudinary.uploader.upload(path)
         const newMemory = await db.Memory.create(req.body)
-        res.locals.user.memories.push(newMemory)
         for (const file of req.files) {
-            const cloudImageData = await upload(file.path)
-            newMemory.images.push(cloudImageData.url)
+            const cloudImageData = await cloudinary.uploader.upload(file.path)
+            newMemory.images.push({
+                url: cloudImageData.url,
+                publicId: cloudImageData.public_id
+            })
+            await newMemory.save()
             unlinkSync(file.path)
         }
+        res.locals.user.memories.push(newMemory)
         newMemory.userId = res.locals.user
         await newMemory.save()
         await res.locals.user.save()
@@ -76,8 +78,11 @@ router.put('/:id', authLockedRoute, uploads.array('images', 20), async (req, res
 
 router.delete('/:id', authLockedRoute, async (req, res) => {
     try {
-        // TODO delete images from cloudinary
-        await db.Memory.findByIdAndDelete(req.params.id)
+        const foundMemory = await db.Memory.findById(req.params.id)
+        for (const image of foundMemory.images) {
+            await cloudinary.uploader.destroy(image.publicId)
+        }
+        await db.Memory.deleteOne(foundMemory)
         res.sendStatus(204)
     } catch (error) {
         console.log(error)
