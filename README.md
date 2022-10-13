@@ -18,7 +18,7 @@ If you would like to use this app locally, feel free to follow these instruction
         - [create a free account here](https://cloudinary.com/) and afterwards, you can find your API env var in your dashboard near the top left of your profile page
 5. run `node .` or `nodemon` to fire up the server
 6. If you haven't already, [follow these instructions to set up the client](https://github.com/JamesOnwordi/memories_client)
-7. If you have the client
+7. If you already have the client, then go ahead and run that and enjoy!
 
 ## Tech Used
 ### Backend (you are here)
