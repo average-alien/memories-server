@@ -3,13 +3,13 @@ const router = express.Router()
 const db = require('../../models')
 
 // POST route to add comment
-router.post('/',async(req,res)=>{
-    
+router.post('/:id',async(req,res)=>{
+    console.log(req.body)
     try{
         console.log('in comments post')
         console.log(req.body)
         const memory = await db.Memory.findById({
-            _id : req.body.id
+            _id : req.params.id
         })
         const newComment = req.body
         memory.comment.push(newComment)
