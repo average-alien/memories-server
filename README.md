@@ -25,14 +25,21 @@ If you would like to use this app locally, feel free to follow these instruction
 - express and node to run our server
 - mongodb and mongoose for our database and ODM
 - Cloudinary API to allow users to upload photos and save them to their memories
+- multer to accept multi part form data
 
 ### Frontend
 - React for rendering components onto a single page web app
+- react-router-dom to implement routes in our app
 - Tailwind as our CSS framework
 - axios to make requests to our backend server
+- Flicker to display an interactive carousel of images
+- React dropzone to create a drag and drop zone for image uploading
 
 ## Approach Taken
-please fill me out
+After settling on an idea for our project. We started by planning out what we would need together. We used a miro board to draw up some wireframes of our views, plan out what kind of models we would need for our database, and lay out the components we would need for our client. Then, we set up a diagram of the various files and chose which ones we wanted to work on by filling it with our chosen color.
+
+We started by setting up our server/database. Made sure that all of our backend routes could be reached properly and that our database schemas were all set before moving onto the frontend client. On the frontend we laid out our components and frontend routes then started on hooking up each view to the backend routes it needed. After getting all the frontend views and backend routes linked up, we started styling up all the pages using Tailwind which all of us were new to. In between styling the pages, we started to incorporate some new features that we agreed would make for a better user experience. Whenever any of us had any issues or ran into any bugs, we would reach out to the other group members for help and after getting all our eyes on the issue we were able to overcome most problems together.
+
 
 ## MVP User Stories
 - [x] As an unregistered user, I would like to sign up with email and password.
@@ -45,11 +52,12 @@ please fill me out
 - [x] As a logged in user, I would like to delete my posts.
 
 ## Stretch User Stories
+- [ ] As a logged in user, I would like to see a preview/thumbnails of images I am uploading.
 - [ ] As a logged in user, I would like to associate my posts with other users.
 - [ ] As a logged in user, I would like to leave comments on posts I've been associated with.
 - [ ] As a logged in user, I would like to upload a profile picture.
 - [ ] As a logged in user, I would like to mark posts as a favorite.
-- [ ] As a logged in user, I would like to view my favorite posts
+- [ ] As a logged in user, I would like to view my favorite posts.
 
 ## ERDs
 ![Project 3 ERDs](https://res.cloudinary.com/dazgyyyvj/image/upload/v1665617908/seir-808-p3/project3erd_coljkd.png)
