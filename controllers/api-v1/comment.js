@@ -3,16 +3,19 @@ const router = express.Router()
 const db = require('../../models')
 
 // POST route to add comment
-router.post('/',async(req,res)=>{
-    
+
+router.post('/:id',async(req,res)=>{
+    console.log(req.body)
     try{
         console.log('in comments post')
         console.log(req.body)
         const memory = await db.Memory.findById({
-            _id : req.body.id
+            _id : req.params.id
         })
         const newComment = req.body
-        memory.comment.push(newComment)
+        console.log(memory)
+        console.log(newComment)
+        memory.comments.push(newComment)
         await memory.save()
 
         return res.json({memory})
@@ -48,19 +51,20 @@ router.put('/:id',async (req,res)=>{
 })
 
 // DELETE route to remove comments
-router.delete('/:id',async (req,res)=>{
+router.delete('/:id/:cid',async (req,res)=>{
     console.log('in comments put')
     console.log(req.params)
     console.log(req.body)
     try{
         const memories = await db.Memory.findById({
-            _id: req.body.id
+            _id: req.params.id
         })
 
-        const pointedComment = memories.comment.findIndex(({_id})=> _id==req.params.id)
+        console.log(memories)
+        const pointedComment = memories.comments.findIndex(({_id})=> _id==req.params.cid)
 
-        memories.comment.splice(pointedComment,1)
-        memories.save()
+        memories.comments.splice(pointedComment,1)
+        await memories.save()
         res.json(memories)
     }catch(err){
         console.log(err)
